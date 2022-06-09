@@ -74,7 +74,10 @@ def add_note(id, note):
 findings = get_findings()
 changed = list()
 
+print('[Start] Getting vulnerabilities')
 for finding in findings.get('results'):
+    print('[Done] Getting vulnerabilities')
+    print('[Start] Checking patterns')
     for title_value in patterns:
         for description_value in patterns.get(title_value):
             if title_value in finding.get('title').lower():
@@ -86,6 +89,8 @@ for finding in findings.get('results'):
                         id=finding.get('id'),
                         note='False Positive typical pattern'
                     )
-                    changed.append(f'{defectdojo_url}/finding/{finding.get("id")}')
-
+                    defectdojo_link = f'{defectdojo_url}/finding/{finding.get("id")}'
+                    changed.append(defectdojo_link)
+                    print(f'[FP No: {len(changed)}] {defectdojo_link}')
+print('[Done] Checking patterns')
 pprint(changed)
