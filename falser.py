@@ -16,7 +16,9 @@ patterns = {
         'go.sum',
         'package.json',
         'package-lock.json',
-        'integrity'
+        'integrity',
+        '.git',
+        '.lock'
     ]
 }
 
