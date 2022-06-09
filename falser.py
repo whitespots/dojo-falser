@@ -70,14 +70,14 @@ def add_note(id, note):
         }
     ).json()
 
-
+print('[Start] Getting vulnerabilities')
 findings = get_findings()
+print('[Done] Getting vulnerabilities')
+
 changed = list()
 
-print('[Start] Getting vulnerabilities')
+print('[Start] Checking patterns')
 for finding in findings.get('results'):
-    print('[Done] Getting vulnerabilities')
-    print('[Start] Checking patterns')
     for title_value in patterns:
         for description_value in patterns.get(title_value):
             if title_value in finding.get('title').lower():
