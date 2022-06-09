@@ -31,7 +31,8 @@ def get_findings():
     }
     while len(result.get('results')) < count:
         response = requests.get(
-            url=f'{defectdojo_url}/api/v2/findings/?verified=False&active=True&duplicate=False&limit=100&offset={offset}',
+            url=f'{defectdojo_url}/api/v2/findings/?duplicate=false&title=hard&limit=100&static_finding=true'
+                f'&verified=false&false_p=false&is_mitigated=false&offset={offset}',
             headers={
                 'Authorization': f'Token {defectdojo_key}'
             }
@@ -54,7 +55,7 @@ def mark_as_false(id):
           "active": False,
           "false_p": True,
         }
-    ).json()
+    )
 
 
 def add_note(id, note):
@@ -68,7 +69,8 @@ def add_note(id, note):
             "private": False,
             "note_type": 0
         }
-    ).json()
+    )
+
 
 print('[Start] Getting vulnerabilities')
 findings = get_findings()
@@ -82,15 +84,18 @@ for finding in findings.get('results'):
         for description_value in patterns.get(title_value):
             if title_value in finding.get('title').lower():
                 if description_value in finding.get('title').lower():
-                    mark_as_false(
+                    status = mark_as_false(
                         id=finding.get('id')
-                    )
-                    add_note(
+                    ).status_code
+                    print(f'[{status}] Mark as FP')
+                    status = add_note(
                         id=finding.get('id'),
                         note='False Positive typical pattern'
-                    )
+                    ).status_code
+                    print(f'[{status}] Adding Note')
                     defectdojo_link = f'{defectdojo_url}/finding/{finding.get("id")}'
                     changed.append(defectdojo_link)
                     print(f'[FP No: {len(changed)}] {defectdojo_link}')
 print('[Done] Checking patterns')
 pprint(changed)
+
